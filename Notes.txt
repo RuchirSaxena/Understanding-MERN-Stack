@@ -42,3 +42,33 @@ mongoose
   .connect(db)
   .then(() => console.log("MongoDB Connected Sucessfully :)"))
   .catch(err => console.log(err));
+
+Step 3:Routing Setup
+=======================
+
+In API folder user.js and same code for other routes of appiction for diffrent modules
+--------------------------------------------------------------------------------------
+const express = require("express");
+const router = express.Router();
+
+// @route GET api/users/test
+// @desc  Test user route
+// @access Public
+router.get("/test", (req, res) => res.json({ msg: "user route works" }));
+
+module.exports = router;
+--------------------------------------------------
+In server.js setting up files module wise routing
+---------------------------------------------------
+const users = require("./routes/api/users");
+const profiles = require("./routes/api/profile");
+const posts = require("./routes/api/post");
+
+
+//Use Routes and setup the base url of API i.e./api/users/<your router>
+app.use("/api/users", users);
+app.use("/api/profiles", profiles);
+app.use("/api/posts", posts);
+
+
+
