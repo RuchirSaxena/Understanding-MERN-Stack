@@ -19,3 +19,14 @@ instead of typing commands manaully to run them each time
 Eg:
   node server.js  ====> npm run start
   nodemon server.js  =====> npm run server
+
+Step 2: MongoDB Setup
+======================
+Create a folder for keeping the configuration settions for mongo MongoDB
+=>config 
+and add a key.json file inside it and write your configuation inside it  
+
+module.exports={
+    mongoURI:'mongodb://<dbuser>:<dbpassword>@ds143593.mlab.com:43593/devconnectordb'
+}
+
