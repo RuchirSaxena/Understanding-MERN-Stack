@@ -1,0 +1,21 @@
+Step 1: Setup Server
+Install below dependincies
+============================
+npm i express mongoose passport passport-jwt jsonwebtoken body-parser bcryptjs validator
+
+Install dev dependincies
+========================
+ npm i nodemon  
+
+Create Scipts in package.json to run them  
+========================================
+ "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js"
+  },
+
+The above scripts added in package.json file , so that we can run them 
+instead of typing commands manaully to run them each time
+Eg:
+  node server.js  ====> npm run start
+  nodemon server.js  =====> npm run server

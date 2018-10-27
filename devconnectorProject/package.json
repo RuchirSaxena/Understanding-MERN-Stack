@@ -1,0 +1,33 @@
+{
+  "name": "devconnector",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RuchirSaxena/Understanding-MERN-Stack.git"
+  },
+  "author": "ruchir saxena",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RuchirSaxena/Understanding-MERN-Stack/issues"
+  },
+  "homepage": "https://github.com/RuchirSaxena/Understanding-MERN-Stack#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.3.0",
+    "mongoose": "^5.3.7",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "validator": "^10.8.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.5"
+  }
+}
