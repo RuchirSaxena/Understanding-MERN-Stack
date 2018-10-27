@@ -30,3 +30,15 @@ module.exports={
     mongoURI:'mongodb://<dbuser>:<dbpassword>@ds143593.mlab.com:43593/devconnectordb'
 }
 
+code in server.js to connect to mongoDB (mlab)
+===============================================
+const mongoose = require("mongoose");
+
+//DB Config
+const db = require("./config/keys").mongoURI;
+
+// Connect to MongoDB Database
+mongoose
+  .connect(db)
+  .then(() => console.log("MongoDB Connected Sucessfully :)"))
+  .catch(err => console.log(err));
