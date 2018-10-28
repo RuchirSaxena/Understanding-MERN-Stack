@@ -1,12 +1,17 @@
 //Setting up port
 const express = require("express");
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser"); //Body parsers are used to access the request body receviced from server
 
 const users = require("./routes/api/users");
 const profiles = require("./routes/api/profile");
 const posts = require("./routes/api/post");
 
 const app = express();
+
+//Body parser middeleware
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 //DB Config
 const db = require("./config/keys").mongoURI;

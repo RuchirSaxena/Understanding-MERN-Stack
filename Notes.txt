@@ -70,6 +70,80 @@ app.use("/api/users", users);
 app.use("/api/profiles", profiles);
 app.use("/api/posts", posts);
 
+Step 4: Mongoose Model setup
+================================
+
+So Mongoose is used to create model for our DB i.e. each collection in our 
+mongoDB will correspond to a model in mongoose , its like ER Modelling 
+
+For this we will :
+=> Create a new folder in root directory by the name :modules
+=> Then we will create the files inside this folder corresponding to our model eg.User.js
+=> In User.js below we are creating a schema for the User Model
+----------------------------------------------------------------
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+
+//Create Schema
+const UserSchema = new Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  avatar: {
+    type: String,
+    required: true
+  },
+  date: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+module.exports = User = mongoose.model("users", UserSchema);
+
+=>then we will import this file in our api folder inside user api file to create 
+a route against it , basicall whaterver routes will be required for intrecting with this 
+User Model from our API routes e.g. CURD
+
+In api/user.js 
+----------------
+const express = require("express");
+const router = express.Router();
+
+//Load user model
+const User = require("../../models/User");
+
+// @route GET api/users/register
+// @desc  Register user
+// @access Public
+router.post("/register", (req, res) => {
+  //To find the first matching record
+  User.findOne({ email: req.body.email }).then(user => {
+    if (user) {
+      return res.status(400).json({ email: "Email already exists" });
+    } else {
+      const newUser = new User({
+        name: req.body.name,
+        email: req.body.email,
+        avatar: req.body.avatar,
+        password: req.body.password
+      });
+    }
+  });
+});
+
+module.exports = router;
+
+
 
 
 
