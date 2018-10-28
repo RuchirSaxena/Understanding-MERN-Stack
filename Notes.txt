@@ -72,3 +72,18 @@ app.use("/api/posts", posts);
 
 
 
+
+
+============
+Side Note:
+============
+If we have commited unwanted files without adding them to the .gitignore ,
+then we cannot these files in futere by adding them to the git ,
+But we need to run below commands to remove the future tracking of these files  
+
+ git rm -r --cached .
+ git add .
+git commit -m "Clean up ignored files"
+
+
+
