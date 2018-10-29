@@ -2,6 +2,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser"); //Body parsers are used to access the request body receviced from server
+const passport = require("passport");
 
 const users = require("./routes/api/users");
 const profiles = require("./routes/api/profile");
@@ -22,6 +23,14 @@ mongoose
   .then(() => console.log("MongoDB Connected Sucessfully :)"))
   .catch(err => console.log(err));
 
+//Passport middleware
+app.use(passport.initialize());
+
+// Passport Config
+require('./config/passport')(passport);
+
+//Routing
+//test route
 app.get("/", (req, res) => res.send("Hello1 "));
 
 //Use Routes and setup the base url of API i.e./api/users/<your router>
