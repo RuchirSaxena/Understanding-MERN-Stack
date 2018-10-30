@@ -270,6 +270,112 @@ router.get(
   }
 );
 
+Step 6: Validating User Input
+==============================
+For validating user input , we are using a npm package  "validator": "^10.8.0"
+
+For its implemetation below are the steps
+1. Install package 
+Note : Validator library requires everthing to be passed in form of string But
+we can receive unfined is value of a feold is not provided for that we should validate
+our input and incase if these are undified then we should convert them to empty to work
+with validator . For this we can make use of a utility function which checks for diffrent
+types of values 
+
+In is-empty.js =>ustility function
+-------------------------------------
+const isEmpty = value => {
+  return (
+    value === undefined ||
+    value === null ||
+    (typeof value === "object" && Object.keys(value).length === 0) ||
+    (typeof value === "string" && value.trim().length === 0)
+  );
+};
+
+module.exports = isEmpty;
+
+2. Create Validation files for seperate modules
+ For Eg : register.js 
+ -----------------------
+  const Validator = require("validator");
+const isEmpty = require("./is-empty");
+
+module.exports = validateRegisterInput = data => {
+  let errors = {};
+
+  data.name = !isEmpty(data.name) ? data.name : "";
+  data.email = !isEmpty(data.email) ? data.email : "";
+  data.password = !isEmpty(data.password) ? data.password : "";
+  data.password2 = !isEmpty(data.password2) ? data.password : "";
+
+  if (!Validator.isLength(data.name, { min: 2, max: 30 })) {
+    errors.name = "Name must be 2 and 30 charactors";
+  }
+
+  if (Validator.isEmpty(data.name)) {
+    errors.name = "Name feild is required";
+  }
+
+  if (!Validator.isEmail(data.email)) {
+    errors.email = "Email not valid";
+  }
+
+  if (Validator.isEmpty(data.email)) {
+    errors.email = "Email feild is required";
+  }
+
+  if (!Validator.isLength(data.password, { min: 6, max: 30 })) {
+    errors.password = "Password must be atleast 6 characters";
+  }
+  if (Validator.isEmpty(data.password)) {
+    errors.password = "Password feild is required";
+  }
+
+  if (!Validator.equals(data.password, data.password2)) {
+    errors.password2 = "password and confirm password are not equal";
+  }
+  if (Validator.isEmpty(data.password2)) {
+    errors.password2 = "Confirm password feild is required";
+  }
+  return {
+    errors,
+    isValid: isEmpty(errors)
+  };
+};
+
+3.Use of the validation in our api files to valid the request 
+
+In user.js API file
+--------------------------------------------------------------
+//Load Input Validation
+const validateRegisterInput = require("../../validation/register");
+const validateLoginInput = require("../../validation/login");
+
+//validating 
+router.post("/login", (req, res) => {
+  //Validating response
+  console.log("in login", req.body);
+  const { errors, isValid } = validateLoginInput(req.body);
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+}
+
+//validating 
+router.post("/register", (req, res) => {
+  const { errors, isValid } = validateRegisterInput(req.body);
+  // Check Validation
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+}
+
+
+
+
+
+
 
 
 
