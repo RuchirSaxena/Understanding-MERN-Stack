@@ -201,6 +201,77 @@ router.post("/login", (req, res) => {
   });
 });
 
+Above we are generating the token(with user info) using JWT but to varify that token we need to use passport
+below are the steps requred to implement passport
+
+1.In server.js
+---------------
+const passport = require("passport");
+//Passport middleware
+app.use(passport.initialize());
+
+In passport.js
+-----------------
+const JwtStrategy = require("passport-jwt").Strategy;
+const ExtractJwt = require("passport-jwt").ExtractJwt;
+const mongoose = require("mongoose");
+const User = mongoose.model("users");
+const keys = require("./keys");
+
+const options = {};
+options.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+options.secretOrKey = keys.secretKey;
+
+module.exports = passport => {
+  passport.use(
+    new JwtStrategy(options, (jwt_payload, done) => {
+      console.log(jwt_payload);
+      User.findById(jwt_payload.id)
+        .then(user => {
+          if (user) {
+            return done(null, user);
+          }
+          return done(null, false);
+        })
+        .catch(err => console.log(err));
+    })
+  );
+};
+
+Inside config/keys.js 
+----------------------
+module.exports = {
+   secretKey: "secret"
+};
+
+In user.js (API) to create protected routes
+-------------------------------------------
+const passport = require("passport");
+
+//Get sceret key from config
+const sceretKey = require("../../config/keys").secretKey; //returns any random text eg:sceret
+
+//Protected routes creation
+
+// @route GET api/users/current
+// @desc  Return current user
+// @access Private
+router.get(
+  "/current",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    console.log("returning the user info");
+    const { id, name, email } = req.user;
+    res.json({
+      id,
+      name,
+      email
+    });
+  }
+);
+
+
+
 
 
 
