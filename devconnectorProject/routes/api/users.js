@@ -20,8 +20,10 @@ router.get("/test", (req, res) => res.json({ msg: "user route works" }));
 // @desc  Register user
 // @access Public
 router.post("/register", (req, res) => {
+  console.log(req.body);
   //To find the first matching record
   User.findOne({ email: req.body.email }).then(user => {
+    
     if (user) {
       return res.status(400).json({ email: "Email already exists" });
     } else {
