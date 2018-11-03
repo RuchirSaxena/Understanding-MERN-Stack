@@ -21,6 +21,7 @@ router.get("/test", (req, res) => res.json({ msg: "user route works" }));
 // @access Public
 router.post("/register", (req, res) => {
   console.log(req.body);
+  
   //To find the first matching record
   User.findOne({ email: req.body.email }).then(user => {
     
