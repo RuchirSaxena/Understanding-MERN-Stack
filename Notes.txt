@@ -270,6 +270,317 @@ router.get(
   }
 );
 
+Similar to Above Step 5 we can create profile api routes
+============================================================
+The steps involved will be .
+1.Create model for profile using mongoose.
+2.Add validation using validator library.
+3.Create routes for getting and creating a user profile 
+
+1. In Profile.js //Model Creation
+-----------------------------------
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+
+//create Schema
+const ProfileSchema = new Schema({
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "users"
+  },
+  handle: {
+    type: String,
+    required: true,
+    max: 40
+  },
+  company: {
+    type: String
+  },
+  location: {
+    type: String
+  },
+  status: {
+    type: String,
+    required: true
+  },
+  skills: {
+    type: [String],
+    required: true
+  },
+  website: {
+    type: String
+  },
+  bio: {
+    type: String
+  },
+  githubusername: {
+    type: String
+  },
+  experince: [
+    {
+      title: {
+        type: String,
+        required: true
+      },
+      location: {
+        type: String
+      },
+      from: {
+        type: Date,
+        required: true
+      },
+      to: {
+        type: Date
+      },
+      current: {
+        type: Boolean,
+        default: false
+      },
+      description: {
+        type: String
+      }
+    }
+  ],
+  education: [
+    {
+      school: {
+        type: String,
+        required: true
+      },
+      degree: {
+        type: String
+      },
+      feildOfStudy: {
+        type: String,
+        required: true
+      },
+      from: {
+        type: Date,
+        required: true
+      },
+      to: {
+        type: Date
+      },
+      current: {
+        type: Boolean,
+        default: false
+      },
+      description: {
+        type: String
+      }
+    }
+  ],
+  social: {
+    youtube: {
+      type: String
+    },
+    facebook: {
+      type: String
+    },
+    twitter: {
+      type: String
+    },
+    linkedin: {
+      type: String
+    },
+    instagram: {
+      type: String
+    }
+  },
+  date: {
+    type: Date,
+    default: Date.now
+  }
+});
+let Profile = mongoose.model("profile", ProfileSchema);
+
+module.exports = Profile;
+
+2.In validation/profile.js // Adding Validation
+-------------------------------------------------
+const Validator = require("validator");
+const isEmpty = require("./is-empty");
+
+module.exports = validateProfileInput = data => {
+  let errors = {};
+
+  data.handle = !isEmpty(data.handle) ? data.handle : "";
+  data.status = !isEmpty(data.status) ? data.status : "";
+  data.skills = !isEmpty(data.skills) ? data.skills : "";
+
+  if (!Validator.isLength(data.handle, { min: 2, max: 40 })) {
+    errors.handle = "Handle needs to be between 2 and 40 characters";
+  }
+
+  if (Validator.isEmpty(data.handle)) {
+    errors.handle = "Profile handle is required";
+  }
+
+  if (Validator.isEmpty(data.status)) {
+    errors.status = "Status fields is required";
+  }
+
+  if (Validator.isEmpty(data.skills)) {
+    errors.skills = "Skills fields is required";
+  }
+
+  if (!isEmpty(data.website)) {
+    if (!Validator.isURL(data.website)) {
+      errors.skills = "Website address is incorrect";
+    }
+  }
+
+  if (!isEmpty(data.website)) {
+    if (!Validator.isURL(data.website)) {
+      errors.skills = "Website address is incorrect";
+    }
+  }
+  if (!isEmpty(data.youtube)) {
+    if (!Validator.isURL(data.youtube)) {
+      errors.skills = "Not a valid URL";
+    }
+  }
+  if (!isEmpty(data.twitter)) {
+    if (!Validator.isURL(data.twitter)) {
+      errors.skills = "Not a valid URL";
+    }
+  }
+  if (!isEmpty(data.facebook)) {
+    if (!Validator.isURL(data.facebook)) {
+      errors.skills = "Not a valid URL";
+    }
+  }
+  if (!isEmpty(data.linkedin)) {
+    if (!Validator.isURL(data.linkedin)) {
+      errors.skills = "Not a valid URL";
+    }
+  }
+  if (!isEmpty(data.instagram)) {
+    if (!Validator.isURL(data.instagram)) {
+      errors.skills = "Not a valid URL";
+    }
+  }
+
+  return {
+    errors,
+    isValid: isEmpty(errors)
+  };
+};
+
+3. In api/profile.js //Creating diffrent routes 
+---------------------------------------------------
+const express = require("express");
+const router = express.Router();
+const mongoose = require("mongoose");
+const passport = require("passport");
+
+//Load profile Model
+const Profile = require("../../models/Profile");
+//Load profile Validation
+const validationProfileInput = require("../../validation/profile");
+
+//Load user Model
+const User = require("../../models/User");
+
+// @route GET api/profiles/test
+// @desc  Test profile route
+// @access Public
+router.get("/test", (req, res) => {
+  res.json({ msg: "profile route works!" });
+});
+
+// @route GET api/profiles/:id
+// @desc  Get current user profile
+// @access Private
+router.get(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const errors = {};
+    // console.log("response:" + req.user);
+
+    Profile.findOne({ user: req.user.id })
+      .populate("user", ["name", "avatar"]) //Used to get data from User data(name,avatax) collection 
+      .then(profile => {
+        if (!profile) {
+          errors.noprofile = "There is no profile for this user";
+          return res.status(404).json(errors);
+        }
+        res.json(profile);
+      })
+      .catch(err => res.status(404).json(err));
+  }
+);
+
+// @route POST api/profiles/
+// @desc  Create/Update current user profile
+// @access Private
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    //Validdation
+    const { errors, isValid } = validationProfileInput(req.body);
+    //check validation
+    if (!isValid) {
+      // console.log(`Error ${errors}`);
+      return res.status(400).json(errors);
+    }
+
+    // Get fields
+    // console.log(req.body);
+    const profileFields = {};
+    profileFields.user = req.user.id;
+    if (req.body.handle) profileFields.handle = req.body.handle;
+    if (req.body.status) profileFields.status = req.body.status;
+    if (req.body.company) profileFields.company = req.body.company;
+    if (req.body.website) profileFields.website = req.body.website;
+    if (req.body.location) profileFields.location = req.body.location;
+    if (req.body.bio) profileFields.bio = req.body.bio;
+    if (req.body.githubusername)
+      profileFields.githubusername = req.body.githubusername;
+    // Skills -spilit into array
+    if (typeof req.body.skills !== "undefined") {
+      profileFields.skills = req.body.skills.split(",");
+    }
+    // Social
+    profileFields.social = {};
+    if (req.body.youtube) profileFields.social.youtube = req.body.youtube;
+    if (req.body.twitter) profileFields.social.twitter = req.body.twitter;
+    if (req.body.facebook) profileFields.social.facebook = req.body.facebook;
+    if (req.body.linkedin) profileFields.social.linkedin = req.body.linkedin;
+    if (req.body.instagram) profileFields.social.instagram = req.body.instagram;
+
+    Profile.findOne({ user: req.user.id }).then(profile => {
+      if (profile) {
+        console.log(`Post data ${profile}`);
+        // Update profile
+        Profile.findOneAndUpdate(
+          { user: req.user.id },
+          { $set: profileFields },
+          { new: true }
+        ).then(profile => res.json(profile));
+      } else {
+        //create profile
+
+        Profile.findOne({ handle: profileFields.handle }).then(profile => {
+          //First : Check if handle exists
+          if (profile) {
+            erros.handle = "That handle already exists";
+            res.status(400).json(errors);
+          }
+          //Second : If not exists then => Save Profile
+          //console.log("line 100:", profileFields);
+          new Profile(profileFields).save().then(profile => res.json(profile));
+        });
+      }
+    });
+  }
+);
+
+module.exports = router;
+
+
 
 
 
