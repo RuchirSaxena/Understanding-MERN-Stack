@@ -1,4 +1,4 @@
-const mongoose = require("require");
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 //Create Schema
@@ -32,7 +32,7 @@ const PostSchema = new Schema({
   comments: [
     {
       user: {
-        tyoe: Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "users"
       },
       text: {
