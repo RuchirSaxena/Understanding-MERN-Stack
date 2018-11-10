@@ -21,18 +21,18 @@ const db = require("./config/keys").mongoURI;
 mongoose
   .connect(db)
   .then(() => console.log("MongoDB Connected Sucessfully :)"))
-  .catch(err => console.log("error from mongo DB :(",err));
+  .catch(err => console.log("error from mongo DB :(", err));
 
-  
 //Passport middleware
 app.use(passport.initialize());
 
 // Passport Config
-require('./config/passport')(passport);
+require("./config/passport")(passport);
 
 //Routing
 //test route
-app.get("/", (req, res) => res.send("Hello1 "));
+app.get("/", (req, res) => res.send("Hello fom server ! "));
+
 
 //Use Routes and setup the base url of API i.e./api/users/<your router>
 app.use("/api/users", users);
