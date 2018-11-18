@@ -581,6 +581,154 @@ router.post(
 module.exports = router;
 
 
+Client Code Implemention
+============================
+
+After setting up React, We Implement React Router
+=====================================================
+Step 1: Setting app using create-react-app
+Step 2: Adding components related to app
+Step 3: Adding React-Router
+
+1. In app.js
+----------------
+//React Router
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+
+  <Router>
+          <div className="App">
+            <Navbar />
+            <Route exact path="/" component={Landing} />
+            <div className="container">
+              <Route exact path="/register" component={Register} />
+              <Route exact path="/login" component={Login} />
+            </div>
+            <Footer />
+          </div>
+        </Router>
+
+2. 
+//Adding Links from where we want to create links from diffrent parts of App
+Eg: in landing.js
+
+ <Link to="/register" className="btn btn-lg btn-info mr-2">
+      Sign Up
+</Link>
+<Link to="/login" className="btn btn-lg btn-light">
+      Login
+</Link>
+
+Step 4: Adding validations using module => classnames
+
+import classnames from "classnames";
+
+  <input
+      type="text"
+      className={classnames("form-control from-control-lg", {
+      "is-invalid": errors.name
+      })}
+      placeholder="Name"
+      name="name"
+      value={this.state.name}
+      onChange={this.onChange}
+      />
+      {errors.name && (
+         <div className="invalid-feedback">{errors.name} </div>
+      )}
+
+ Step 5: Adding Redux for state management
+ 1.//Redux imports
+import { Provider } from "react-redux";
+
+ <Provider store={store}>
+    <Router>
+        //Adding components
+            <div className="App">
+            <Navbar />
+            <Route exact path="/" component={Landing} />
+            <div className="container">
+              <Route exact path="/register" component={Register} />
+              <Route exact path="/login" component={Login} />
+            </div>
+            <Footer />
+          </div>
+    </Router>
+ </Provider>
+
+2. Creating store
+In store.js
+---------------
+import { createStore, applyMiddleware, compose } from "redux";
+import thunk from "redux-thunk";
+import rootReducer from "../reducers/reducers";
+
+const initialState = {};
+
+const middleware = [thunk];
+
+const store = createStore(
+  rootReducer,
+  initialState,
+  compose(
+    applyMiddleware(...middleware),
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  )
+);
+
+export default store;
+
+2.Creating root reducer
+
+import { createStore, applyMiddleware, compose } from "redux";
+import thunk from "redux-thunk";
+import rootReducer from "../reducers/reducers";
+
+const initialState = {};
+
+const middleware = [thunk];
+In reducers.js
+-----------------
+const store = createStore(
+  rootReducer,
+  initialState,
+  compose(
+    applyMiddleware(...middleware),
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  )
+);
+
+export default store;
+
+3. Adding reducers 
+In authReducer.js
+---------------------
+
+import { createStore, applyMiddleware, compose } from "redux";
+import thunk from "redux-thunk";
+import rootReducer from "../reducers/reducers";
+
+const initialState = {};
+
+const middleware = [thunk];
+
+const store = createStore(
+  rootReducer,
+  initialState,
+  compose(
+    applyMiddleware(...middleware),
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  )
+);
+
+export default store;
+
+
+
+ 
+
+
+
+
 
 
 
